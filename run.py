@@ -1,5 +1,7 @@
 import gspread
 from google.oauth2.service_account import Credentials
+import pandas as pd
+
 
 # Taken from the walkthrough project
 SCOPE = [
@@ -15,12 +17,16 @@ SHEET = GSPREAD_CLIENT.open('restaurant_survey')
 
 results = SHEET.worksheet('responses')
 
-# function to get values
+
+def welcome_function():
+
+    # function to get values
 
 
 def response_values():
     """
-    Get the ratings from the responses spreadsheet and append them to a variable
+    Get the ratings from the responses spreadsheet and
+    append them to a variable
     """
     print("\nGathering responses from spreadsheet, standby...\n")
     ratings = SHEET.worksheet('responses').get_all_values()
@@ -40,17 +46,39 @@ def response_values():
 response_values()
 
 
-def get_averege_of_each_question():
+def get_averege_of_each_question(sheet):
     """
-    Gets the averege for each question to later update the averege sheet 
+    Gets the averege for each question to later update the averege sheet
     so that the user can get an overview of the reviews.
     """
+    values = []
+    for ind in range(2, 12):
+        column = sheet.col_values(ind)[1: 11]
+        column = list(map(int, column))
+        for lists in column:
+            averege_for_each = sum(column) / len(column)
+
+        values.append(averege_for_each)
+    return values
+
+
+each_averege = get_averege_of_each_question(results)
 
 
 def update_averege_worksheet():
     """
     Updates the Averege worksheet with the data generated in the previous function
     """
+
+    print("Calculating Avereges")
+
+    averege_sheet = SHEET.worksheet('averege')
+    averege_sheet.append_row(each_averege)
+
+    print("Avereges Calculated, See Avereges form in Google sheets!")
+
+
+update_averege_worksheet()
 
 
 def get_most_disliked_area():
