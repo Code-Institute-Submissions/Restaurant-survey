@@ -18,11 +18,7 @@ SHEET = GSPREAD_CLIENT.open('restaurant_survey')
 results = SHEET.worksheet('responses')
 
 
-def welcome_function():
-
-    # function to get values
-
-
+# function to get values
 def response_values():
     """
     Get the ratings from the responses spreadsheet and
@@ -43,9 +39,6 @@ def response_values():
     print(f"Responses Gatherd, the averege of all answers is: {averege}\n")
 
 
-response_values()
-
-
 def get_averege_of_each_question(sheet):
     """
     Gets the averege for each question to later update the averege sheet
@@ -59,47 +52,87 @@ def get_averege_of_each_question(sheet):
             averege_for_each = sum(column) / len(column)
 
         values.append(averege_for_each)
+
     return values
 
 
-each_averege = get_averege_of_each_question(results)
-
-
-def update_averege_worksheet():
+def update_averege_worksheet(data):
     """
     Updates the Averege worksheet with the data generated in the previous function
     """
 
-    print("Calculating Avereges")
+    print("Calculating Avereges\n")
 
     averege_sheet = SHEET.worksheet('averege')
-    averege_sheet.append_row(each_averege)
+    averege_sheet.append_row(data)
 
-    print("Avereges Calculated, See Avereges form in Google sheets!")
-
-
-update_averege_worksheet()
+    print("Avereges Calculated, See Avereges form in Google sheets!\n")
 
 
-def get_most_disliked_area():
+def get_most_disliked_area(sheet):
     """
     Gathers which of the areas are most disliked
     """
 
+    avereges = []
+    for ind in range(2, 12):
+        column = sheet.col_values(ind)[1: 11]
+        column = list(map(int, column))
+        for lists in column:
+            averege_for_each = sum(column) / len(column)
 
-def update_improve_worksheet():
+        avereges.append(averege_for_each)
+    new_avereges = avereges.pop()
+    print(new_avereges)
+    new_avereges = ['Doing ok' if i ==
+                    3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i == 3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
+
+    return new_avereges
+
+
+# this is data for update
+new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
+print(new_avereges)
+
+
+def update_improve_worksheet(data):
     """
     Updates the improve worksheet with the values generated in the previous function
     """
+    print("Converting values so user can se where attention is needed")
+    improve_sheet = SHEET.worksheet('improve')
+    improve_sheet.append_row(data)
+    print("Values converted see Google Sheet")
 
 
-def get_most_liked():
+def main():
     """
-    Gets the most liked areas of the survey
+    A main function that runs all the needed functions for the program to function.
     """
 
+    response_values()
+    avereges = get_averege_of_each_question(SHEET.worksheet('responses'))
+    update_averege_worksheet(avereges)
+    new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
+    update_improve_worksheet(new_avereges)
 
-def update_most_liked_worksheet():
-    """
-    Updates the most_liked worksheet with the values from the previous worksheet
-    """
+
+main()
+
+"""
+def welcome_function():
+    print("Hello! This program will run all the ratings from a survey and return avereges, aslong with most liked and most disliked subjects.")
+    print("What would you like to know, see the options below:")
+    print("* total-averege")
+    print("* averege-for-each-question")
+    print("* most-liekd")
+    print("* most-disliked")
+    print("** type excatly like above")
+    user_input = input("Type your request here: ")
+
+    if user_input == "total-averege":
+        response_values()
+    elif user_input == "averege-for-each-question":
+        get_averege_of_each_question(results)
+    elif user_input == "most-liked"
+"""
