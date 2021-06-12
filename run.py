@@ -1,6 +1,5 @@
 import gspread
 from google.oauth2.service_account import Credentials
-import pandas as pd
 
 
 # Taken from the walkthrough project
@@ -34,9 +33,8 @@ def response_values():
             to_int = int(num)
             total.append(to_int)
 
-    averege = sum(total) / len(total)
-
-    print(f"Responses Gatherd, the averege of all answers is: {averege}\n")
+    sum_averege = sum(total) / len(total)
+    return f"Responses Gatherd, the averege of all answers is: {sum_averege}\n"
 
 
 def get_averege_of_each_question(sheet):
@@ -83,7 +81,6 @@ def get_most_disliked_area(sheet):
 
         avereges.append(averege_for_each)
     new_avereges = avereges.pop()
-    print(new_avereges)
     new_avereges = ['Doing ok' if i ==
                     3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i == 3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
 
@@ -91,48 +88,66 @@ def get_most_disliked_area(sheet):
 
 
 # this is data for update
-new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
-print(new_avereges)
 
 
 def update_improve_worksheet(data):
     """
     Updates the improve worksheet with the values generated in the previous function
     """
-    print("Converting values so user can se where attention is needed")
+    print("Converting values so user can se where attention is needed\n")
     improve_sheet = SHEET.worksheet('improve')
     improve_sheet.append_row(data)
-    print("Values converted see Google Sheet")
+    print("Values converted see Google Sheet\n")
+
+
+def welcome_main_function():
+    print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements\n")
+    print("Enter the word 'return avereges' to calculate the avereges of the survey results.\n")
+    print("Or enter the word 'improvement' to see what areas needs to be improved.\n")
+    user_input = input("Enter here: ")
+
+    if user_input == "return avereges":
+        sum_averege_func = response_values()
+        print(sum_averege_func)
+        avereges = get_averege_of_each_question(
+            SHEET.worksheet('responses'))
+        update_averege_worksheet(avereges)
+
+    elif user_input == "improvement":
+        new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
+        update_improve_worksheet(new_avereges)
+
+    return user_input
+
+
+def validate_user_input(input_from_user):
+    """
+    Validates the user input and makes the user try again if the input does not match the required input.
+    """
+    try:
+        if input_from_user != "responses" and "improvements":
+            raise ValueError(
+                f"Word needs to match word above"
+            )
+    except ValueError as e:
+        print(f"Check your what you typed, {e}\n")
+
+    try:
+        if input_from_user != str:
+            raise TypeError(
+                "Input is not of type str"
+            )
+    except TypeError as e_2:
+        print(f"Please Enter correct type, {e_2}\n")
 
 
 def main():
     """
-    A main function that runs all the needed functions for the program to function.
+    Main function that will run all the other functions
     """
-
-    response_values()
-    avereges = get_averege_of_each_question(SHEET.worksheet('responses'))
-    update_averege_worksheet(avereges)
-    new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
-    update_improve_worksheet(new_avereges)
+    input_from_user = welcome_main_function()
+    validate_user_input(input_from_user)
+    welcome_main_function()
 
 
 main()
-
-"""
-def welcome_function():
-    print("Hello! This program will run all the ratings from a survey and return avereges, aslong with most liked and most disliked subjects.")
-    print("What would you like to know, see the options below:")
-    print("* total-averege")
-    print("* averege-for-each-question")
-    print("* most-liekd")
-    print("* most-disliked")
-    print("** type excatly like above")
-    user_input = input("Type your request here: ")
-
-    if user_input == "total-averege":
-        response_values()
-    elif user_input == "averege-for-each-question":
-        get_averege_of_each_question(results)
-    elif user_input == "most-liked"
-"""
