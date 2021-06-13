@@ -14,8 +14,6 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('restaurant_survey')
 
-results = SHEET.worksheet('responses')
-
 
 # function to get values
 def response_values():
@@ -46,9 +44,9 @@ def get_averege_of_each_question(sheet):
     for ind in range(2, 12):
         column = sheet.col_values(ind)[1: 11]
         column = list(map(int, column))
-        for lists in column:
-            averege_for_each = sum(column) / len(column)
-
+        # for lists in column:
+        #     averege_for_each = sum(column) / len(column)
+        averege_for_each = sum(column) / len(column)
         values.append(averege_for_each)
 
     return values
@@ -81,9 +79,23 @@ def get_most_disliked_area(sheet):
 
         avereges.append(averege_for_each)
     new_avereges = avereges.pop()
-    new_avereges = ['Doing ok' if i ==
-                    3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i == 3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
 
+    new_avereges = ['Doing ok' if i == 3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i ==
+                    3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
+    #new_avereges = []
+    """
+    for i in avereges:
+        if i == 3.3:
+            new_avereges.append('Doing ok')
+        elif i == 3.2:
+            new_avereges.append('Needs of attention')
+        elif i == 3.1:
+            new_avereges.append('Urgent need of attention')
+        elif i <= 3.0:
+            new_avereges.append('Critical')
+        else:
+            new_avereges.append('Doing Good')
+    """
     return new_avereges
 
 
@@ -101,11 +113,11 @@ def update_improve_worksheet(data):
 
 
 def welcome_main_function():
-
+    print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements")
+    print("Enter the word 'return avereges' to calculate the avereges of the survey results.")
+    print("Or enter the word 'improvement' to see what areas needs to be improved.")
     while True:
-        print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements")
-        print("Enter the word 'return avereges' to calculate the avereges of the survey results.")
-        print("Or enter the word 'improvement' to see what areas needs to be improved.")
+
         user_input = input("Enter here: \n")
 
         if user_input == "return avereges":
@@ -114,36 +126,29 @@ def welcome_main_function():
             avereges = get_averege_of_each_question(
                 SHEET.worksheet('responses'))
             update_averege_worksheet(avereges)
-
+            return
         elif user_input == "improvement":
             new_avereges = get_most_disliked_area(
-                SHEET.worksheet('responses'))
+                SHEET.worksheet('improve'))
             update_improve_worksheet(new_avereges)
-    if user_input == "return avereges" or user_input == "improvement":
-        pass
+            return
 
-
-data_input = welcome_main_function()
+        validate_user_input(user_input)
 
 
 def validate_user_input(data_input):
     """
     Validate user input, and keeps the program running until user enters correct value
     """
-
     try:
-        if data_input != "return avereges" and data_input != "improvement":
+        if data_input not in ["return avereges", "improvement"]:
             raise ValueError(
                 "Check you spelling"
             )
 
     except ValueError as e:
         print(f"Watch out, {e}")
-        return False
-    return False
-
-
-validate_user_input(data_input)
+    return True
 
 
 def main():
