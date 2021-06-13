@@ -94,59 +94,60 @@ def update_improve_worksheet(data):
     """
     Updates the improve worksheet with the values generated in the previous function
     """
-    print("Converting values so user can se where attention is needed\n")
+    print("\nConverting values so user can se where attention is needed\n")
     improve_sheet = SHEET.worksheet('improve')
     improve_sheet.append_row(data)
     print("Values converted see Google Sheet\n")
 
 
 def welcome_main_function():
-    print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements\n")
-    print("Enter the word 'return avereges' to calculate the avereges of the survey results.\n")
-    print("Or enter the word 'improvement' to see what areas needs to be improved.\n")
-    user_input = input("Enter here: ")
 
-    if user_input == "return avereges":
-        sum_averege_func = response_values()
-        print(sum_averege_func)
-        avereges = get_averege_of_each_question(
-            SHEET.worksheet('responses'))
-        update_averege_worksheet(avereges)
+    while True:
+        print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements")
+        print("Enter the word 'return avereges' to calculate the avereges of the survey results.")
+        print("Or enter the word 'improvement' to see what areas needs to be improved.")
+        user_input = input("Enter here: \n")
 
-    elif user_input == "improvement":
-        new_avereges = get_most_disliked_area(SHEET.worksheet('responses'))
-        update_improve_worksheet(new_avereges)
+        if user_input == "return avereges":
+            sum_averege_func = response_values()
+            print(sum_averege_func)
+            avereges = get_averege_of_each_question(
+                SHEET.worksheet('responses'))
+            update_averege_worksheet(avereges)
 
-    return user_input
+        elif user_input == "improvement":
+            new_avereges = get_most_disliked_area(
+                SHEET.worksheet('responses'))
+            update_improve_worksheet(new_avereges)
+    if user_input == "return avereges" or user_input == "improvement":
+        return True
 
 
-def validate_user_input(input_from_user):
+def validate_user_input(data_input):
     """
-    Validates the user input and makes the user try again if the input does not match the required input.
+    Validate user input, and keeps the program running until user enters correct value
     """
+
     try:
-        if input_from_user != "responses" and "improvements":
+        if data_input != "return avereges" or data_input != "improvement":
             raise ValueError(
-                f"Word needs to match word above"
+                "Check you spelling"
             )
-    except ValueError as e:
-        print(f"Check your what you typed, {e}\n")
 
-    try:
-        if input_from_user != str:
-            raise TypeError(
-                "Input is not of type str"
-            )
-    except TypeError as e_2:
-        print(f"Please Enter correct type, {e_2}\n")
+    except ValueError as e:
+        print(f"Watch out, {e}")
+        return False
+    return True
+
+
+data_input = welcome_main_function()
+validate_user_input(data_input)
 
 
 def main():
     """
     Main function that will run all the other functions
     """
-    input_from_user = welcome_main_function()
-    validate_user_input(input_from_user)
     welcome_main_function()
 
 
