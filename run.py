@@ -120,7 +120,10 @@ def welcome_main_function():
                 SHEET.worksheet('responses'))
             update_improve_worksheet(new_avereges)
     if user_input == "return avereges" or user_input == "improvement":
-        return True
+        pass
+
+
+data_input = welcome_main_function()
 
 
 def validate_user_input(data_input):
@@ -129,7 +132,7 @@ def validate_user_input(data_input):
     """
 
     try:
-        if data_input != "return avereges" or data_input != "improvement":
+        if data_input != "return avereges" and data_input != "improvement":
             raise ValueError(
                 "Check you spelling"
             )
@@ -137,10 +140,9 @@ def validate_user_input(data_input):
     except ValueError as e:
         print(f"Watch out, {e}")
         return False
-    return True
+    return False
 
 
-data_input = welcome_main_function()
 validate_user_input(data_input)
 
 
