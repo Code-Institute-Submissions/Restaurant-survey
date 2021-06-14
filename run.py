@@ -82,7 +82,7 @@ def get_most_disliked_area(sheet):
 
     new_avereges = ['Doing ok' if i == 3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i ==
                     3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
-    #new_avereges = []
+    # new_avereges = []
     """
     for i in avereges:
         if i == 3.3:
@@ -114,34 +114,35 @@ def update_improve_worksheet(data):
 
 def welcome_main_function():
     print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements")
-    print("Enter the word 'return avereges' to calculate the avereges of the survey results.")
-    print("Or enter the word 'improvement' to see what areas needs to be improved.")
+    print("Enter the word 'r' for return avereges' to calculate the avereges of the survey results.")
+    print("Or enter the letter 'i' for  'improvement' to see what areas needs to be improved.")
     while True:
 
         user_input = input("Enter here: \n")
 
-        if user_input == "return avereges":
+        if user_input == "r":
             sum_averege_func = response_values()
             print(sum_averege_func)
             avereges = get_averege_of_each_question(
                 SHEET.worksheet('responses'))
             update_averege_worksheet(avereges)
             return
-        elif user_input == "improvement":
+        elif user_input == "i":
             new_avereges = get_most_disliked_area(
-                SHEET.worksheet('improve'))
+                SHEET.worksheet('responses'))
             update_improve_worksheet(new_avereges)
             return
 
         validate_user_input(user_input)
+    return True
 
 
-def validate_user_input(data_input):
+def validate_user_input(user_input):
     """
     Validate user input, and keeps the program running until user enters correct value
     """
     try:
-        if data_input not in ["return avereges", "improvement"]:
+        if user_input not in ["return avereges", "improvement"]:
             raise ValueError(
                 "Check you spelling"
             )
