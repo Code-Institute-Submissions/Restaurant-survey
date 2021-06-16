@@ -80,31 +80,17 @@ def get_most_disliked_area(sheet):
         avereges.append(averege_for_each)
     new_avereges = avereges.pop()
 
-    new_avereges = ['Doing ok' if i == 3.3 else 'Needs attention' if i == 3.2 else 'Urgent need of attention' if i ==
+    new_avereges = ['Doing ok' if i == 3.3 else 'Needs attention' if
+                    i == 3.2 else 'Urgent need of attention' if i ==
                     3.1 else 'Critical' if i <= 3.0 else 'Doing Good' for i in avereges]
-    # new_avereges = []
-    """
-    for i in avereges:
-        if i == 3.3:
-            new_avereges.append('Doing ok')
-        elif i == 3.2:
-            new_avereges.append('Needs of attention')
-        elif i == 3.1:
-            new_avereges.append('Urgent need of attention')
-        elif i <= 3.0:
-            new_avereges.append('Critical')
-        else:
-            new_avereges.append('Doing Good')
-    """
+
     return new_avereges
-
-
-# this is data for update
 
 
 def update_improve_worksheet(data):
     """
-    Updates the improve worksheet with the values generated in the previous function
+    Updates the improve worksheet with
+    the values generated in the previous function
     """
     print("\nConverting values so user can se where attention is needed\n")
     improve_sheet = SHEET.worksheet('improve')
@@ -115,7 +101,8 @@ def update_improve_worksheet(data):
 def welcome_main_function():
     print("Hello! This program will run all the ratings from a survey and return avereges or see what areas is in need of improvements")
     print("Enter the word 'r' for return avereges' to calculate the avereges of the survey results.")
-    print("Or enter the letter 'i' for  'improvement' to see what areas needs to be improved.")
+    print("Or enter the letter 'i' for 'improvement' to see what areas needs to be improved.")
+    print("Finally, You can choose 'b' for both of the above.")
     while True:
 
         user_input = input("Enter here: \n")
@@ -132,8 +119,18 @@ def welcome_main_function():
                 SHEET.worksheet('responses'))
             update_improve_worksheet(new_avereges)
             return
-
+        elif user_input == "b":
+            sum_averege_func = response_values()
+            print(sum_averege_func)
+            avereges = get_averege_of_each_question(
+                SHEET.worksheet('responses'))
+            update_averege_worksheet(avereges)
+            new_avereges = get_most_disliked_area(
+                SHEET.worksheet('responses'))
+            update_improve_worksheet(new_avereges)
+            return
         validate_user_input(user_input)
+
     return True
 
 
@@ -142,13 +139,14 @@ def validate_user_input(user_input):
     Validate user input, and keeps the program running until user enters correct value
     """
     try:
-        if user_input not in ["return avereges", "improvement"]:
-            raise ValueError(
-                "Check you spelling"
-            )
+        if len(user_input) == 0:
+            print("You need to enter something for the program to work")
+        elif user_input not in ['r', 'i', 'b']:
+            print("Check that you entered the right letter")
 
     except ValueError as e:
         print(f"Watch out, {e}")
+
     return True
 
 
