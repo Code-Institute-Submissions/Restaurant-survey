@@ -58,7 +58,10 @@ Getting the excel file setup in the beginning was abit complicated but managed t
 ### Validator Testing 
 
 - PEP8 
-  - 
+  - Most of the code went through the PEP8 check, There are some lines that are to long. 
+  - One of them include a list comprehension i made for the different categories of values. i could also do it in a if/elif/else statement. but decided to keep the list comprehension.
+  - The other errors from PEP8 was from to long print statements. which i also decided to ignore.
+  
 ### Unfixed Bugs
 
 At the moment I am not aware of any unfixed bugs, but I am not completely done with the testing so will update this category if any will arrise during further testing. 
